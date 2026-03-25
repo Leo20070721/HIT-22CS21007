@@ -1,0 +1,3 @@
+如果使用scanf 
+最前面加这个：
+#define _CRT_SECURE_NO_WARNINGS 1
