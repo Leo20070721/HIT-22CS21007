@@ -148,6 +148,18 @@ struct Calculator{
 				MessageBox(GetHWnd(), buf, _T("Error"), MB_OK | MB_ICONERROR);
 				return false;
 			}
+			if(_tcslen(MainWindow.txts[i].text) == 1 && (MainWindow.txts[i].text[0] == '.' || MainWindow.txts[i].text[0] == '-')){
+				TCHAR buf[64];
+				_stprintf_s(buf, 64, _T("Data%d can't be empty!"), i + 1);
+				MessageBox(GetHWnd(), buf, _T("Error"), MB_OK | MB_ICONERROR);
+				return false;
+			}
+			if(_tcslen(MainWindow.txts[i].text) == 2 && MainWindow.txts[i].text[0] == '-' && MainWindow.txts[i].text[1] == '.'){
+				TCHAR buf[64];
+				_stprintf_s(buf, 64, _T("Data%d can't be empty!"), i + 1);
+				MessageBox(GetHWnd(), buf, _T("Error"), MB_OK | MB_ICONERROR);
+				return false;
+			}
 
 			bool haveDot = false;
 			for(int j = 0; j < _tcslen(MainWindow.txts[i].text); j++){
@@ -171,8 +183,9 @@ struct Calculator{
 				//防CTFer打穿我的内存
 				else if(!((MainWindow.txts[i].text[j] >= '0' && MainWindow.txts[i].text[j] <= '9') || MainWindow.txts[i].text[j] == '.' || MainWindow.txts[i].text[j] == '-')){
 					TCHAR buf[64];
-					_stprintf_s(buf, 64, _T("Data%d has illegal character! U R JUST A DIRTY HACKER, AREN'T YOU?"), i + 1);
-					MessageBox(GetHWnd(), buf, _T("Error"), MB_OK | MB_ICONERROR);
+					_stprintf_s(buf, 128, _T("Data%d has illegal character!\nU R JUST A DIRTY HACKER, AREN'T YOU?"), i + 1);
+					MessageBox(GetHWnd(), buf, _T("Fatal Error"), MB_OK | MB_ICONERROR);
+					exit(-1);
 					return false;
 				}
 			}
@@ -206,8 +219,15 @@ struct Calculator{
 				result = data1 / data2;
 				break;
 		}
-		cout<<"data1: "<<data1<<" data2: "<<data2<<" result: "<<result<<endl;
+		//cout<<"data1: "<<data1<<" data2: "<<data2<<" result: "<<result<<endl;
 		_stprintf_s(MainWindow.txts[2].text, MainWindow.txts[2].MAX_LENGTH, _T("%g"), result);
+		//double的数据范围太大了，完全够这几位霍霍的，就不写数据范围检查了
+
+		//Easter Egg
+		if(data1 == 114 && data2 == 514 && op == '+'){
+			MessageBox(GetHWnd(), _T("114+514=1919810"), _T("Deep Dark Fantasy"), MB_OK | MB_ICONINFORMATION);
+		}
+
 		MainWindow.MainWindowDraw();
 	}
 };
@@ -266,7 +286,7 @@ struct MessageWorker{
 			if(len > 0){
 				MainWindow.txts[MainWindow.isActive].text[len - 1] = '\0';
 			}			
-		}else if((msg.ch >= '0' && msg.ch <= '9') || msg.ch == '.' || msg.ch == '-'){ // 只允许输入数字、小数点和负号
+		}else if((msg.ch >= '0' && msg.ch <= '9') || msg.ch == '.' || msg.ch == '-'){ // 只允许输入数字、小数点和负号 //
 			int len = _tcslen(MainWindow.txts[MainWindow.isActive].text);
 			if(len <= MainWindow.txts[MainWindow.isActive].MAX_LENGTH){ // 确保不超过文本框限制
 				MainWindow.txts[MainWindow.isActive].text[len] = msg.ch;
