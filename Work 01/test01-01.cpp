@@ -8,7 +8,7 @@ using namespace std;
 
 
 void init(){
-initgraph(540, 220);
+	initgraph(540, 220);
 	setbkcolor(WHITE);
 	setlinecolor(BLUE);		// 设置线条颜色为蓝色
 	settextcolor(BLUE);		// 设置文字颜色为蓝色
@@ -27,6 +27,8 @@ void wait_for_escape(){
 int main()
 {
 	init();
+
+	outtextxy(10, 10, _T("Hello, World!"));
 
 	wait_for_escape();
 	//_getch();				// 按任意键继续

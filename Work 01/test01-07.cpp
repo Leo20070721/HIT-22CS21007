@@ -234,8 +234,6 @@ int main()
 {
 	init();
 
-	//SetFocus(GetHWnd()); // 确保窗口获得焦点
-
 	MainWindowType MainWindow;
 	MainWindow.MainWindowDraw();
 

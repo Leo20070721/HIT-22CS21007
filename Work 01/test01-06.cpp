@@ -170,11 +170,6 @@ struct MessageWorker{
 			}
 		}
 		MainWindow.MainWindowDraw();
-		//debug:
-		cout << MainWindow.txts[MainWindow.isActive].text << endl;
-		cout << "isActive: " << MainWindow.isActive << endl;
-		cout << "isReadOnly: " << MainWindow.txts[MainWindow.isActive].isReadOnly << endl;
-		cout << "getChar: " << msg.ch << endl;
 	}
 	
 };
@@ -182,8 +177,6 @@ struct MessageWorker{
 int main()
 {
 	init();
-
-	//SetFocus(GetHWnd()); // 确保窗口获得焦点
 
 	MainWindowType MainWindow;
 	MainWindow.MainWindowDraw();
@@ -196,7 +189,6 @@ int main()
 			if(msg.message == WM_LBUTTONDOWN){
 				MessageWorker().HandleMouseLButtonDown(msg, MainWindow);
 			}else if(msg.message == WM_CHAR){
-				cout << "WM_CHAR" << endl;
 				MessageWorker().HandleKeyboardCharInput(msg, MainWindow);
 			}else if(msg.message == WM_KEYDOWN && msg.vkcode == VK_ESCAPE){
 				RUNNING = false;

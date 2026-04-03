@@ -2,6 +2,7 @@
 #include <iostream>
 #include <graphics.h>		// 引用图形库头文件
 #include <conio.h>
+#include <vector>
 using namespace std;
 
 // 当前 EasyX 库是 ANSI 版本，避免 UNICODE 宏导致接口类型不匹配
@@ -25,9 +26,10 @@ struct Button{
 		outtextxy(x + w / 2 - 20, y + h / 2 - 10, text);
 	}
 };
+#define _TXTBOX_MAX_SIZE 256
 struct TextBox{
 	int x, y, w, h; 
-	TCHAR text[32];
+	TCHAR text[_TXTBOX_MAX_SIZE];
 	int MAX_LENGTH=12; 
 	COLORREF FillColor,LineColor[3]; 
 	bool isActive=false; // 是否处于编辑状态
@@ -77,52 +79,83 @@ void wait_for_escape(){
 
 struct MainWindowData
 {	
-	int startX = 20, startY = 20;
+	int btn_startX, btn_startY ;
+	int btn_size,btn_lines;
+	vector <int> btn_num_per_line;
+	int btn_w, btn_h, btn_gap_w, btn_gap_h;
+	vector <COLORREF> btn_fill_color;
+	vector <TCHAR*> btns_text;
 
-	int btn_w = 80, btn_h = 50, btn_gap = 100;
-	COLORREF btn_fill_color[5] = {RGB(173, 216, 230), RGB(173, 216, 230), RGB(173, 216, 230), RGB(173, 216, 230), WHITE};
-	TCHAR *btns_text[5] = {_T("+"), _T("-"), _T("*"), _T("/"), _T("ESC")};
+	int hint_startY;
+	vector <TCHAR*> const_txts_hint;
 	
-	TCHAR *const_txts_hint[3] = {_T("Data1"), _T("Data2"), _T("Result")};
-	
-	int txt_w = 140, txt_h = 50, txt_gap = 160;
-	int txt_MAX_LENGTH[3] = {12, 12, 24};
-	COLORREF txt_fill_color[3] = {WHITE, WHITE, WHITE};
-	COLORREF txt_line_color[3] = {LIGHTGRAY, BLACK, BLUE};//ReadOnly, Normal, Active
+	int txt_startX, txt_startY;
+	int txt_size;
+	int txt_w, txt_h, txt_gap;
+	vector <int> txt_MAX_LENGTH;
+	vector <bool> txt_isReadOnly;
+	vector <COLORREF> txt_fill_color;
+	vector <COLORREF> txt_line_color;
 
 };
+
+MainWindowData MainWindowData01={
+	20, 20, 
+	5, 1,
+	{5},
+	80, 50, 20, 0,
+	{RGB(173, 216, 230), RGB(173, 216, 230), RGB(173, 216, 230), RGB(173, 216, 230), WHITE},
+	{_T("+"), _T("-"), _T("*"), _T("/"), _T("ESC")},
+
+	120, 
+	{_T("Data1"), _T("Data2"), _T("Result")},
+
+	20, 140,
+	3,
+	140, 50, 20,
+	{12, 12, 24},
+	{false, false, true},
+	{WHITE, WHITE, WHITE},
+	{LIGHTGRAY, BLACK, BLUE}//ReadOnly, Normal, Active
+};
+
 struct MainWindowType{
 	bool RUNNING = true;
-	Button btns[5];
-	TextBox txts[3];
-	
+	vector <Button> btns;
+	vector <TextBox> txts;
+	MainWindowData MainWindowData;
 	int isActive; // -1: none, 0: Data1, 1: Data2, 2: Result
 
-	MainWindowType(){ 
-		MainWindowInit();
-	}
-
 	void MainWindowInit(){
-		MainWindowData MainWindowData;
 		RUNNING = true;
-		for(int i = 0; i < 5; i++){
-			btns[i].x = MainWindowData.startX + i * MainWindowData.btn_gap;
-			btns[i].y = MainWindowData.startY;
-			btns[i].w = MainWindowData.btn_w;
-			btns[i].h = MainWindowData.btn_h;
-			_tcscpy_s(btns[i].text, 15, MainWindowData.btns_text[i]);
-			btns[i].FillColor = MainWindowData.btn_fill_color[i];
-			btns[i].LineColor = BLACK;
+		btns.resize(MainWindowData.btn_size);
+		txts.resize(MainWindowData.txt_size);
+		
+		int idx = 0;
+		for(int i = 0; i < MainWindowData.btn_lines; i++){
+			for(int j = 0; j < MainWindowData.btn_num_per_line[i]; j++){
+				btns[idx].x = MainWindowData.btn_startX + j * (MainWindowData.btn_w + MainWindowData.btn_gap_w);
+				btns[idx].y = MainWindowData.btn_startY + i * (MainWindowData.btn_h + MainWindowData.btn_gap_h);
+				btns[idx].w = MainWindowData.btn_w;
+				btns[idx].h = MainWindowData.btn_h;
+				_tcscpy_s(btns[idx].text, 15, MainWindowData.btns_text[idx]);
+				btns[idx].FillColor = MainWindowData.btn_fill_color[idx];
+				btns[idx].LineColor = BLACK;
+				idx++;
+			}
 		}
 		
 		isActive = -1;
-		txts[2].isReadOnly = true;
-		for(int i = 0; i < 3; i++){
-			txts[i].x = MainWindowData.startX + i * MainWindowData.txt_gap;
-			txts[i].y = MainWindowData.startY + MainWindowData.btn_h + 40;
+		for(int i = 0; i < MainWindowData.txt_size; i++){
+			txts[i].isReadOnly = MainWindowData.txt_isReadOnly[i];
+		}
+		
+		for(int i = 0; i < MainWindowData.txt_size; i++){
+			txts[i].x = MainWindowData.txt_startX + i * (MainWindowData.txt_w + MainWindowData.txt_gap);
+			txts[i].y = MainWindowData.txt_startY;
 			txts[i].w = MainWindowData.txt_w;
 			txts[i].h = MainWindowData.txt_h;
-			_tcscpy_s(txts[i].text, 32, _T(""));
+			_tcscpy_s(txts[i].text, _TXTBOX_MAX_SIZE, _T(""));
 			txts[i].FillColor = MainWindowData.txt_fill_color[i];
 			txts[i].LineColor[0] = MainWindowData.txt_line_color[0];
 			txts[i].LineColor[1] = MainWindowData.txt_line_color[1];
@@ -132,11 +165,12 @@ struct MainWindowType{
 	}
 
 	void MainWindowDraw(){ 
-		MainWindowData MainWindowData;
 		cleardevice();
-		for(int i = 0; i < 5; i++){btns[i].create();}
-		for(int i = 0; i < 3; i++){outtextxy(MainWindowData.startX + i * MainWindowData.txt_gap, MainWindowData.startY + MainWindowData.btn_h + 10, MainWindowData.const_txts_hint[i]);}
-		for(int i = 0; i < 3; i++){txts[i].create();}
+		for(int i = 0; i < MainWindowData.btn_size; i++){btns[i].create();}
+		for(int i = 0; i < MainWindowData.const_txts_hint.size(); i++){
+			outtextxy(MainWindowData.txt_startX + i*(MainWindowData.txt_w+MainWindowData.txt_gap), MainWindowData.hint_startY, MainWindowData.const_txts_hint[i]);
+		}
+		for(int i = 0; i < MainWindowData.txt_size; i++){txts[i].create();}
 	}
 };
 
@@ -304,19 +338,21 @@ int main()
 {
 	init();
 
-	MainWindowType MainWindow;
-	MainWindow.MainWindowDraw();
+	MainWindowType MainWindow01;
+	MainWindow01.MainWindowData = MainWindowData01;
+	MainWindow01.MainWindowInit();
+	MainWindow01.MainWindowDraw();
 
 	ExMessage msg;	
-	while(MainWindow.RUNNING){
+	while(MainWindow01.RUNNING){
 		while (peekmessage(&msg, EM_MOUSE | EM_KEY | EM_CHAR))
 		{
 			if(msg.message == WM_LBUTTONDOWN){
-				MessageWorker().HandleMouseLButtonDown(msg, MainWindow);
+				MessageWorker().HandleMouseLButtonDown(msg, MainWindow01);
 			}else if(msg.message == WM_CHAR){
-				MessageWorker().HandleKeyboardCharInput(msg, MainWindow);
+				MessageWorker().HandleKeyboardCharInput(msg, MainWindow01);
 			}else if(msg.message == WM_KEYDOWN && msg.vkcode == VK_ESCAPE){
-				MainWindow.RUNNING = false;
+				MainWindow01.RUNNING = false;
 				break;
 			}
 		}		
