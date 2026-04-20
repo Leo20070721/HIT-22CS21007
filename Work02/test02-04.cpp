@@ -461,7 +461,7 @@ class Windows_Game: public WindowsType{
             srand((unsigned)time(NULL));
             this->rightAnswer = rand() % 100 + 1;
             this->mode = mode;
-            this->MAXguessedTimes = 1;
+            setMAXguessedTimes(mode);
             this->guessedTimes = 0;
 
             int x_mid = 400, y_mid = 300;
@@ -484,7 +484,7 @@ class Windows_Game: public WindowsType{
         }
 
         void reInit() override{
-            this->MAXguessedTimes = 1;
+            setMAXguessedTimes(this->mode);
             while(!guessHistory.empty()) guessHistory.pop_back();
             srand((unsigned)time(NULL));
             this->rightAnswer = rand() % 100 + 1;
@@ -494,14 +494,40 @@ class Windows_Game: public WindowsType{
             texts[1].setText(_T("You have tried for: 0 times"));
         }
 
+        void setMAXguessedTimes(int mode){
+            switch(mode){
+                case 1:
+                    this->MAXguessedTimes = 1;
+                    break;
+                case 2:
+                    this->MAXguessedTimes = INT_MAX-1;
+                    break;
+            }
+        }
+
         void buttonConfirmHandler(){
             int guessNum = _ttoi(txtInputBoxes[0].getText());
-
+            guessedTimes++;       
+            
             if(guessNum == rightAnswer){
                 mainWindows.openWindow(new Windows_Final(this->mode, true, rightAnswer, guessedTimes));
             }else{
-                mainWindows.openWindow(new Windows_Final(this->mode, false, rightAnswer, guessedTimes));
-            }            
+                if(guessedTimes >= MAXguessedTimes){
+                    mainWindows.openWindow(new Windows_Final(this->mode, false, rightAnswer, guessedTimes));
+                }
+            }
+            printf("guessNum=%d, rightAnswer=%d, guessedTimes=%d\n", guessNum, rightAnswer, guessedTimes);
+            {
+                TCHAR str[64];
+                if(guessNum > rightAnswer){
+                    _stprintf_s(str, _countof(str), _T("%d is too big."), guessNum);
+                }else{
+                    _stprintf_s(str, _countof(str), _T("%d is too small."), guessNum);
+                }
+                guessHistory.push_back(Text(120, 260 + 30 * guessedTimes, str, 20, BLACK, _T("宋体"), make_pair(-1,0)));
+                texts[1].setText((_stprintf_s(str, _countof(str), _T("You have tried for: %d times"), guessedTimes), str));
+            }
+            
         }
 
         void mouseDown(int x, int y) override{
