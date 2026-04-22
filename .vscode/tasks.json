@@ -12,7 +12,8 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-L",
                 "C:\\New Programs\\Develops\\TDM-GCC_x64_9.2.0\\lib",
-                "-leasyx"
+                "-leasyx",
+                "-lwinmm"
             ],
             "options": {
                 "cwd": "${fileDirname}"
