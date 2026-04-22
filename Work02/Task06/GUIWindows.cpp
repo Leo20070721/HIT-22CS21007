@@ -43,6 +43,8 @@ class Windows_Final: public WindowsType{
         void aboutToAppear() override{
             if(!result){
                 PlaySound(_T("D:\\Program Files\\Github Storage\\22CS21007\\Work02\\Task06\\Sounds\\Defeat.wav"), NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
+            }else{
+                PlaySound(_T("D:\\Program Files\\Github Storage\\22CS21007\\Work02\\Task06\\Sounds\\Victory.wav"), NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
             }
         }
         void aboutToDisappear() override{
@@ -207,7 +209,7 @@ class Windows_Index: public WindowsType{
         }
 
         void aboutToAppear() override{
-            //PlaySound(_T("D:\\Program Files\\Github Storage\\22CS21007\\Work02\\Task06\\Sounds\\MainMenu.wav"), NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
+            PlaySound(_T("D:\\Program Files\\Github Storage\\22CS21007\\Work02\\Task06\\Sounds\\MainMenu.wav"), NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
         }
         void aboutToDisappear() override{
             PlaySound(NULL, NULL, 0);
