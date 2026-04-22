@@ -33,8 +33,8 @@ class Windows_Final: public WindowsType{
                     }else{
                         _stprintf_s(buffer, _countof(buffer), _T("You are loser, YOU DAMN HACKER."), mode);
                     }
-                    texts.push_back(Text(x_mid, 180, buffer, 20, BLACK, _T("宋体"), std::make_pair (0,0)));
                 }
+                texts.push_back(Text(x_mid, 180, buffer, 20, BLACK, _T("宋体"), std::make_pair (0,0)));
             }
             buttons.push_back(Button(x_mid,400,150,50,Text(_T("Play Again"), 20, WHITE, _T("宋体"),std::make_pair (0,0)), GREEN, BLACK, std::make_pair (0,0), std::make_pair (0,0)));
             buttons.push_back(Button(x_mid,480,150,50,Text(_T("Main Menu"), 20, WHITE, _T("宋体"),std::make_pair (0,0)), BROWN, BLACK, std::make_pair (0,0), std::make_pair (0,0)));
