@@ -1,0 +1,9 @@
+development: 3
+education: 9
+knowledge: 6
+science: 6
+strategy: 3
+students: 5
+talent: 1
+technology: 4
+we: 7
