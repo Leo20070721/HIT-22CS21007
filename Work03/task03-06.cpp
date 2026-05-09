@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "./GUIBasicTypes.h"
 using namespace std;
 
 int ReadFile(string Filename, vector<string> &Words){
@@ -85,11 +86,11 @@ map<string, int> TaskWordCount(const vector<string> &Words, const vector<string>
     return Result;
 }
 
-pair<priority_queue<int, vector<int>, greater<int> >, int> Statistics(const vector<string> &Words, const vector<string> &Tasks, vector< pair<string, int> > &Result){
+pair<vector<int>, int> Statistics(const vector<string> &Words, const vector<string> &Tasks, vector< pair<string, int> > &Result){
     map<string, int> WordCounts;
     map<int, int> CountFrequency;
     priority_queue< pair<int,int> > Counts;
-    priority_queue<int, vector<int>, greater<int> > re_mode;int re_mid;
+    vector<int> re_mode;int re_mid;
     //---------------------
     for(const auto &word : Words){
         WordCounts[word]++;
@@ -108,10 +109,18 @@ pair<priority_queue<int, vector<int>, greater<int> >, int> Statistics(const vect
     for(const auto &pair : CountFrequency){
         Counts.push(make_pair(pair.second, pair.first));
     }int mode_num=Counts.top().first; 
-    while(Counts.top().first==mode_num && !Counts.empty()){
-        re_mode.push(Counts.top().second);
-        Counts.pop(); 
+    {
+        priority_queue< int, vector<int>, greater<int> > _mid;
+        while(Counts.top().first==mode_num && !Counts.empty()){
+            _mid.push(Counts.top().second);
+            Counts.pop(); 
+        }
+        while(!_mid.empty()){
+            re_mode.push_back(_mid.top());
+            _mid.pop();
+        }
     }
+    
     //---------------------
     return make_pair(re_mode, re_mid);
 
@@ -135,8 +144,8 @@ int main(){
     Result = TaskWordCount(Words, Tasks);
     WriteResult("D:\\Program Files\\Github Storage\\22CS21007\\Work03", Result);
 
-    pair<priority_queue<int, vector<int>, greater<int> >, int> Stats = Statistics(Words, Tasks, StatisticsResult);
-    cout<<"统计结果：" << endl;
+    pair<vector<int>, int> Stats = Statistics(Words, Tasks, StatisticsResult);
+    cout<<"Statistics Result:" << endl;
     {
         priority_queue< int, vector<int>, greater<int> > _mid;
         for(const auto &pair : StatisticsResult){
@@ -148,9 +157,38 @@ int main(){
         }cout << endl;
     }
     
-    cout << "众数： " << Stats.first.top() << endl;
-    cout << "中位数: " << Stats.second << endl;
+    cout << "Mode: ";
+    for(const auto &pair : Stats.first){
+        cout<<pair<<" ";
+    }
+    cout << "Mid: " << Stats.second << endl;
 
-    system("pause");
+    //-------------------------------------------------
+    init(800, 600);
+    cleardevice();
+    BarChart bc(20, 20, 760, 500);
+    {
+        map <string, int> _mid;
+        for(auto &item : StatisticsResult){
+            _mid[item.first] = item.second;
+        }
+        bc.setData(_mid);
+    }
+   
+    bc.create();
+    wait_for_escape();
+    cleardevice();
+    bc.create(1);
+    string _txt = "Mid: " + to_string(Stats.second)+"                        "+"Mode: ";
+    for(const auto &pair : Stats.first){
+        _txt += to_string(pair) + " ";
+    }
+    TCHAR _temp[512];
+    StringToTCharVector(_txt,_temp);
+    outtextxy(200,565,_temp);
+
+    wait_for_escape();
+    cleardevice();
+    closegraph();
     return 0;
 }

@@ -29,15 +29,19 @@ void StringToTCharVector(const std::string& src, TCHAR* _temp) {
     std::vector<TCHAR> tcharVec(wideLen);
     MultiByteToWideChar(CP_ACP, 0, src.c_str(), -1, tcharVec.data(), wideLen);
     int pos=0;
-    while(!tcharVec.empty()){
-        _temp[pos++]=tcharVec.front();
+    for(auto ch:tcharVec){
+        _temp[pos++]=ch;
     }
     return ;
 #else
     // ANSI 构建：直接复制
     std::vector<TCHAR> tcharVec(src.begin(), src.end());
     tcharVec.push_back(_T('\0'));
-    return tcharVec;
+    int pos=0;
+    for(auto ch:tcharVec){
+        _temp[pos++]=ch;
+    }
+    return ;
 #endif
 }
 
@@ -302,7 +306,7 @@ class TXTInputBox{
 class BarChart{ 
     protected:
         int x, y, w, h;
-        int wide_percent=90;
+        int wide_percent=80;
         std::map< std::string, int> data;
         const COLORREF BarColor[15]={
             RGB(0xA8, 0xDA, 0xDC),//浅湖蓝
@@ -346,7 +350,7 @@ class BarChart{
             switch (mode)
             {
             case 1:{
-                std::priority_queue<std::pair<int, std::string>> _mid;  
+                std::priority_queue<std::pair<int, std::string> , std::vector<std::pair<int, std::string> > , std::greater<std::pair<int, std::string> > > _mid;  
                 for(auto i : data){
                     _mid.push(std::make_pair(i.second, i.first));
                 }
@@ -377,23 +381,25 @@ class BarChart{
                     max_num = it.second;
                 }
             }
-            int per_height = h / max_num;
+            int per_height = h / (max_num+1);
 
             for(int i=0; i<data.size(); i++){
+                int b = y + h;  
                 int real_w = 0.01 * this->wide_percent * per_wide;
                 int gap_w = 0.01 / 2 * (100-this->wide_percent) * per_wide;
-                int x = i * per_wide;
-                int y = h - data[i].second * per_height;
-                int w = per_wide;
-                
-                int h = data[i].second * per_height;
+                int w_x = x + gap_w + i * per_wide;
+                int w_w = per_wide;                
+                int w_h = data[i].second * per_height;
                 std::string text = data[i].first;
                 setfillcolor(this->BarColor[i]);
-                fillrectangle(x+gap_w, y, real_w, h);
+                fillrectangle(w_x+gap_w, b-w_h, w_x+gap_w+real_w, b);
                 settextcolor(BLACK);
+                settextstyle(12, 0, _T("宋体"));
                 TCHAR temp[20];
                 StringToTCharVector(data[i].first, temp);
-                outtextxy(x+gap_w, y-(textheight(temp)*11/10), temp);
+                outtextxy(w_x+w_w/2-textwidth(temp)/2, b+(textheight(temp)*11/10), temp);
+                StringToTCharVector(std::to_string(data[i].second), temp);
+                outtextxy(w_x+w_w/2-textwidth(temp)/2, b-w_h-(textheight(temp)*11/10), temp);
             }
         }
 };
@@ -410,7 +416,12 @@ void init(int width=500, int height=600){
 void wait_for_escape(){
 	while(true){
 		if(GetAsyncKeyState(VK_ESCAPE) & 0x8000){	// 按下 ESC 键退出循环
-			break;
+			while(true){
+                if(!(GetAsyncKeyState(VK_ESCAPE) & 0x8000)){
+					break;
+				}
+            }
+            break;
 		}
 		Sleep(10);
 	}

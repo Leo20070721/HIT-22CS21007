@@ -148,7 +148,11 @@ int main(){
         }cout << endl;
     }
     
-    cout << "众数： " << Stats.first.top() << endl;
+    cout << "众数： ";
+    while(!Stats.first.empty()){
+        cout << Stats.first.top() << " ";
+        Stats.first.pop();
+    }cout<< endl;
     cout << "中位数: " << Stats.second << endl;
 
     system("pause");
