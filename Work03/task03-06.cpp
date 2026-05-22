@@ -99,6 +99,9 @@ pair<vector<int>, int> Statistics(const vector<string> &Words, const vector<stri
         Result.push_back(make_pair(task, WordCounts[task]));
         CountFrequency[WordCounts[task]]++;
     }
+    sort(Result.begin(), Result.end(), [](const pair<string, int> &a, const pair<string, int> &b){
+        return a.second < b.second;
+    });
     //---------------------
     if(Result.size()%2==1){
         re_mid = Result[Result.size()/2].second;
@@ -132,17 +135,17 @@ int main(){
     vector< pair<string, int> > StatisticsResult;
     string Filename;
 
-    Filename = "D:\\Program Files\\Github Storage\\22CS21007\\Work03\\tasks.txt";
+    Filename = ".\\tasks.txt";
     ReadFile(Filename, Tasks);
     PreProcess(Tasks);
 
-    Filename = "D:\\Program Files\\Github Storage\\22CS21007\\Work03\\file.txt";
+    Filename = ".\\file.txt";
     int count = ReadFile(Filename, Words);
     PreProcess(Words);
     //-------------------------------------------------
     
     Result = TaskWordCount(Words, Tasks);
-    WriteResult("D:\\Program Files\\Github Storage\\22CS21007\\Work03", Result);
+    WriteResult(".\\Work03", Result);
 
     pair<vector<int>, int> Stats = Statistics(Words, Tasks, StatisticsResult);
     cout<<"Statistics Result:" << endl;
