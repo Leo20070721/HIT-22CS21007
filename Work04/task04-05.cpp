@@ -84,7 +84,6 @@ void BrouteSolute(){
         }
     }
 }
-
 bool DFSSolute(int row){
     if(row>ques_N){
         printAns();
