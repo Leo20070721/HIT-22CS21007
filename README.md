@@ -4,16 +4,16 @@ HIT-22CS21007(计算与智能程序设计)
 
 ---
 
-哈尔滨工业大学
-Harbin Institute of Technology
-课程名称：计算与智能程序设计
-课程英文名称：Computing and Intelligent Programming
-课程代码：22CS21007
-开课单位：计算学部
-授课教师：李东
-授课对象：2025级AI加先进技术领军班
-课程学时：48 (实验学时:48)
-先修课程：计算思维与人工智能(HIT-22CS14005, 计算思维与人工智能A)
+哈尔滨工业大学  
+Harbin Institute of Technology  
+课程名称：计算与智能程序设计  
+课程英文名称：Computing and Intelligent Programming  
+课程代码：22CS21007  
+开课单位：计算学部  
+授课教师：李东  
+授课对象：2025级AI加先进技术领军班  
+课程学时：48 (实验学时:48)  
+先修课程：计算思维与人工智能(HIT-22CS14005, 计算思维与人工智能A)  
 
 ---
 
